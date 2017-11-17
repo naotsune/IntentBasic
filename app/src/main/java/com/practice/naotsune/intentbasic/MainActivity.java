@@ -3,9 +3,11 @@ package com.practice.naotsune.intentbasic;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.Intent;
-import android.view.Menu;
+//import android.view.Menu;
 import android.view.View;
 import android.util.Log;
+import android.widget.EditText;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -19,8 +21,15 @@ public class MainActivity extends AppCompatActivity {
     public void onClick(View v) {
         //SubActivityへのインデントを作成
         Intent i = new Intent(this, com.practice.naotsune.intentbasic.SubActivity.class);
+        EditText txtName = (EditText)this.findViewById(R.id.txtName);
+        i.putExtra("txtName", txtName.getText().toString());
+
         //アクティビティを起動
-        startActivity(i);
+        //startActivity(i);
+
+        //SubActivityを、結果を戻してもらう前提で呼び出し
+        this.startActivityForResult(i, 1);
+
         Log.d("EVENT", "onClick");
     }
 
@@ -49,5 +58,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         Log.d("LIFE", "onStop");
         super.onStop();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //リクエストコードと結果コードをチェック
+        if(requestCode == 1 && resultCode == RESULT_OK) {
+            //結果コードの取得＆トースト表示
+            String txtName = data.getStringExtra("txtName");
+            Toast.makeText(this, String.format("こんにちは、%sさん!", txtName), Toast.LENGTH_SHORT).show();
+        }
+
     }
 }
